@@ -1,0 +1,53 @@
+import json
+import sys
+import re
+
+# Open the input file from Iozone
+# Don't continue if no arguments passed into script
+if len(sys.argv) == 1:
+    quit()
+
+# Debug len check
+# print(len(sys.argv))
+
+
+filename = sys.argv[1]
+fp = open(filename, 'r')
+#lines = fp.readlines()
+
+#   kB  reclen    write  rewrite    read    reread    read     write     read   rewrite      read   fwrite frewrite    fread  freread
+#Get to the proper line of the file
+
+pattern = re.compile(". kB. reclen")
+data_time = False
+print(pattern)
+for line in fp:
+    if data_time:
+            data = line.split()
+            if len(data) > 13 :
+                json_export = {'ioz_file size_kB': data[0],
+                            'ioz_reclen': data[1],
+                            'ioz_write': data[2],
+                            'ioz_rewrite': data[3],
+                            'ioz_read': data[4],
+                            'ioz_reread': data[5],
+                            'ioz_random_read': data[6],
+                            'ioz_random_write': data[7],
+                            'ioz_bkwd_read': data[8],
+                            'ioz_record_rewrite': data[9],
+                            'ioz_stride_read': data[10],
+                            'ioz_fwrite': data[11],
+                            'ioz_frewrite': data[12],
+                            'ioz_fread': data[13],
+                            'ioz_freread': data[14]}
+
+            #print(json_export)
+            output_json = json.dumps(json_export, indent=4)
+            print(output_json)
+
+    if re.search(pattern, line, 0):
+            data_time = True
+
+    #print(line)
+
+fp.close()
